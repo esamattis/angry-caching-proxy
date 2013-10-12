@@ -1,0 +1,15 @@
+{
+  "name": "angry-proxy",
+  "version": "0.0.0",
+  "description": "",
+  "main": "index.js",
+  "author": "Esa-Matti Suuronen <esa-matti@suuronen.org>",
+  "license": "MIT",
+  "dependencies": {
+    "http-proxy": "~0.10.3",
+    "request": "~2.27.0",
+    "express": "~3.4.0",
+    "q": "~0.9.7",
+    "filed": "~0.1.0"
+  }
+}
