@@ -20,11 +20,8 @@ var handlers = [
 ];
 
 var cacheDir = __dirname + "/cache";
-
 var app = express();
-
 var proxy = new httpProxy.RoutingProxy();
-
 var cachePromises = {};
 
 app.use(function(req, res, next) {
