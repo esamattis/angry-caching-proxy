@@ -25,7 +25,7 @@ and execute it with
 
 ## Usage
 
-Create directory where save cached files
+Create directory where to save cached files
 
     mkdir cache
 
