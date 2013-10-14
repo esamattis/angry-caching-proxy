@@ -5,6 +5,10 @@
   "main": "index.js",
   "author": "Esa-Matti Suuronen <esa-matti@suuronen.org>",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/epeli/angry-caching-proxy.git"
+  },
   "bin": {
     "angry-caching-proxy": "./bin/angry-caching-proxy"
   },
