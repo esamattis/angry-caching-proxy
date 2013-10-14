@@ -1,7 +1,7 @@
 {
   "name": "angry-caching-proxy",
   "version": "1.0.0",
-  "description": "",
+  "description": "Angry Caching Proxy which speeds up package downloads for apt-get, npm and rubygems",
   "main": "index.js",
   "author": "Esa-Matti Suuronen <esa-matti@suuronen.org>",
   "license": "MIT",
