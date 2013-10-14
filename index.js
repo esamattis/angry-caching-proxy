@@ -119,6 +119,7 @@ function createCache(req, res) {
 
     var file = filed(target);
     r.pipe(file);
+    r.pipe(res);
 
     cachePromises[target] = cachePromise = Q.all([
         meta,
@@ -147,9 +148,7 @@ function cacheResponse(req, res) {
     return stat(toCachePath(req)).then(function(info) {
         return respondFromCache(req, res);
     }, function(err) {
-        return createCache(req, res).then(function() {
-            return cacheResponse(req, res);
-        });
+        return createCache(req, res);
     });
 }
 
