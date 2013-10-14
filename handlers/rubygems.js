@@ -5,7 +5,7 @@ var hosts = {
     "rubygems.global.ssl.fastly.net": true
 };
 
-function rubygems(req, res) {
+function isRubyGemRequest(req, res) {
     if (!hosts[req.headers.host]) return false;
 
     if (/^.*\.gem$/.test(req.url)) {
@@ -14,4 +14,4 @@ function rubygems(req, res) {
 
 }
 
-module.exports = rubygems;
+module.exports = isRubyGemRequest;

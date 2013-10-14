@@ -14,7 +14,8 @@ Q.longStackSupport = true;
 
 
 var handlers = [
-    require("./handlers/rubygems")
+    require("./handlers/rubygems"),
+    require("./handlers/npm")
 ];
 
 var cacheDir = __dirname + "/cache";
