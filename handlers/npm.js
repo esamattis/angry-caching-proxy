@@ -6,7 +6,7 @@ var hosts = {
 function isNodeModuleRequest(req, res) {
     if (!hosts[req.headers.host]) return false;
 
-    if (/^.*\.tgz/.test(req.url)) {
+    if (/^.*\.tgz$/.test(req.url)) {
         return true;
     }
 
