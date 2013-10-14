@@ -15,7 +15,7 @@ Get node.js and type
 
     sudo npm install -g angry-caching-proxy
 
-or if you don't sudoing random code you can install it locally too:
+or if you don't like sudoing random code you can install it locally too:
 
     npm install angry-caching-proxy
 
@@ -25,7 +25,7 @@ and execute it with
 
 ## Usage
 
-Create directory where save cached files
+Create directory where to save cached files
 
     mkdir cache
 
@@ -47,4 +47,8 @@ With npm it is required to use the non-https version of the registry
 
     http_proxy=http://localhost:8000 npm install --registry http://registry.npmjs.org/
 
+
+Cool guys can also set the proxy globally for everybody:
+
+    export http_proxy=http://localhost:8000
 
