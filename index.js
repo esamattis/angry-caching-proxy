@@ -9,6 +9,7 @@ var request = require("request");
 
 var stat = Q.denodeify(fs.stat);
 var writeFile = Q.denodeify(fs.writeFile);
+var rename = Q.denodeify(fs.rename);
 
 Q.longStackSupport = true;
 
@@ -56,23 +57,21 @@ app.use(function(req, res, next) {
 
 app.listen(8000);
 
-function promiseFromStreams() {
-    return Q.all(Array.prototype.map.call(arguments, function(stream) {
-        return Q.promise(function(resolve, reject) {
-            stream.on("error", reject);
+function promiseFromStream(stream) {
+    return Q.promise(function(resolve, reject) {
+        stream.on("error", reject);
 
-            // This event fires when no more data will be provided.
-            stream.on("end", resolve);
+        // This event fires when no more data will be provided.
+        stream.on("end", resolve);
 
-            // Emitted when the underlying resource (for example, the backing file
-            // descriptor) has been closed. Not all streams will emit this.
-            stream.on("close", resolve);
+        // Emitted when the underlying resource (for example, the backing file
+        // descriptor) has been closed. Not all streams will emit this.
+        stream.on("close", resolve);
 
-            // When the end() method has been called, and all data has been flushed
-            // to the underlying system, this event is emitted.
-            stream.on("finish", resolve);
-        });
-    }));
+        // When the end() method has been called, and all data has been flushed
+        // to the underlying system, this event is emitted.
+        stream.on("finish", resolve);
+    });
 }
 
 function toUrl(req) {
@@ -103,6 +102,8 @@ function createCache(req, res) {
     console.log("Cache miss, creating", toUrl(req));
 
     var target = toCachePath(req);
+    var tempTarget = target + "." + Math.random().toString(36).substring(7) +".tmp";
+
     var cachePromise = cachePromises[target];
     if (cachePromises[target]) {
         return cachePromise;
@@ -117,11 +118,13 @@ function createCache(req, res) {
 
             // Write cache only on 200 success
             if (clientRes.statusCode === 200) {
-                var file = filed(target);
+                var file = filed(tempTarget);
 
                 resolve(Q.all([
                     writeMeta(req, clientRes),
-                    promiseFromStreams(file)
+                    promiseFromStream(file).then(function() {
+                        return rename(tempTarget, target);
+                    })
                 ]));
 
                 clientRequest.pipe(file);
@@ -136,7 +139,7 @@ function createCache(req, res) {
 
     cachePromises[target] = cachePromise = Q.all([
         cacheWrite,
-        promiseFromStreams(clientRequest),
+        promiseFromStream(clientRequest),
     ]);
 
     cachePromise.finally(function() {
@@ -151,7 +154,7 @@ function respondFromCache(req, res) {
     console.log("Cache hit for", toUrl(req), toCacheKey(req));
 
     res.sendfile(toCachePath(req));
-    return promiseFromStreams(res);
+    return promiseFromStream(res);
 }
 
 
