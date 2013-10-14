@@ -8,6 +8,7 @@ var httpProxy = require('http-proxy');
 var path = require("path");
 var Q = require("q");
 var request = require("request");
+var bouncy = require("bouncy");
 
 var stat = Q.denodeify(fs.stat);
 var writeFile = Q.denodeify(fs.writeFile);
@@ -20,45 +21,41 @@ var handlers = [
 ];
 
 var cacheDir = __dirname + "/cache";
-var app = express();
-var proxy = new httpProxy.RoutingProxy();
+// var proxy = new httpProxy.RoutingProxy();
 var cachePromises = {};
 
-app.use(function(req, res, next) {
+
+var app = express();
+app.use(function(req, res) {
+    cacheResponse(req, res).fail(function(err) {
+        console.log("Cache FAIL", toUrl(req), err);
+    });
+});
+
+var server = bouncy(function (req, res, bounce) {
+    console.log(req.method, req.url);
 
     var cache = handlers.some(function(h) {
         return h(req, res);
     });
 
     if (cache) {
-        cacheResponse(req, res).fail(function(err) {
-            console.log("Cache FAIL", toUrl(req), err);
-        });
-    } else {
-        if (!req.headers.host) {
-            var msg = "Bad request, no host is set for " + req.url;
-            console.log(msg);
-            return next(new Error(msg));
-        }
-
-        console.log("Proxying", req.url, req.headers.host);
-
-        var parts = req.headers.host.split(":");
-        var host = parts[0];
-        var port = parts[1] || 80;
-
-        proxy.proxyRequest(req, res, {
-            host: host,
-            port: port,
-            headers: {
-                "foo": "bar"
-            }
-        });
+        return app(req, res);
     }
+
+    bounce(req.url);
 
 });
 
-app.listen(8000);
+server.on("connect", function() {
+    console.log("on connect");
+});
+server.on("connection", function(socket) {
+    socket.setTimeout(1);
+    console.log("on connection");
+});
+
+server.listen(8000);
 
 function promiseFromStreams() {
     return Q.all(Array.prototype.map.call(arguments, function(stream) {
