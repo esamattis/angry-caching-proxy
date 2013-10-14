@@ -109,23 +109,34 @@ function createCache(req, res) {
     }
 
     var s = Date.now();
-    var r = request(toUrl(req));
+    var clientRequest = request(toUrl(req));
 
+    var cacheWrite = Q.promise(function(resolve, reject) {
+        clientRequest.on("error", reject);
+        clientRequest.on("response", function(clientRes) {
 
-    var meta = Q.promise(function(resolve, reject) {
-        r.on("response", function(clientRes) {
-            resolve(writeMeta(req, clientRes));
+            // Write cache only on 200 success
+            if (clientRes.statusCode === 200) {
+                var file = filed(target);
+
+                resolve(Q.all([
+                    writeMeta(req, clientRes),
+                    promiseFromStreams(file)
+                ]));
+
+                clientRequest.pipe(file);
+            }
+
+            // But always proxy the response to the client
+            clientRequest.pipe(res);
         });
+
     });
 
-    var file = filed(target);
-    r.pipe(file);
-    r.pipe(res);
 
     cachePromises[target] = cachePromise = Q.all([
-        meta,
-        promiseFromStreams(r),
-        promiseFromStreams(file)
+        cacheWrite,
+        promiseFromStreams(clientRequest),
     ]);
 
     cachePromise.finally(function() {
