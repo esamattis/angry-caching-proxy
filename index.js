@@ -1,10 +1,8 @@
 
-
 var crypto = require("crypto");
 var express = require("express");
 var filed = require("filed");
 var fs = require("fs");
-var httpProxy = require('http-proxy');
 var path = require("path");
 var Q = require("q");
 var request = require("request");
@@ -21,40 +19,36 @@ var handlers = [
 
 var cacheDir = __dirname + "/cache";
 var app = express();
-var proxy = new httpProxy.RoutingProxy();
+
 var cachePromises = {};
 
 app.use(function(req, res, next) {
 
-    var cache = handlers.some(function(h) {
+    if (!req.headers.host) {
+        var msg = "Bad request, no host is set for " + req.url;
+        console.log(msg);
+        return next(new Error(msg));
+    }
+
+    var useCache = handlers.some(function(h) {
         return h(req, res);
     });
 
-    if (cache) {
+    if (useCache) {
         cacheResponse(req, res).fail(function(err) {
             console.log("Cache FAIL", toUrl(req), err);
         });
-    } else {
-        if (!req.headers.host) {
-            var msg = "Bad request, no host is set for " + req.url;
-            console.log(msg);
-            return next(new Error(msg));
-        }
-
-        console.log("Proxying", req.url, req.headers.host);
-
-        var parts = req.headers.host.split(":");
-        var host = parts[0];
-        var port = parts[1] || 80;
-
-        proxy.proxyRequest(req, res, {
-            host: host,
-            port: port,
-            headers: {
-                "foo": "bar"
-            }
-        });
+        return;
     }
+
+    console.log("Proxying", req.url);
+    request({
+        url: req.url,
+        headers: req.headers
+    }).on("error", function(err) {
+        res.end("Upstream failed", 500);
+    }).pipe(res);
+
 
 });
 
