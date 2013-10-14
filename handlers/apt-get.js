@@ -1,6 +1,5 @@
 
-
-function isUbuntuArchive(req, res) {
+function isDebRequest(req, res) {
 
     if (!/^.*archive.ubuntu.com$/.test(req.headers.host)) return false;
 
@@ -10,4 +9,4 @@ function isUbuntuArchive(req, res) {
 
 }
 
-module.exports = isUbuntuArchive;
+module.exports = isDebRequest;
