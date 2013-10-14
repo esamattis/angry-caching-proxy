@@ -4,8 +4,9 @@ This is a angry caching proxy which speeds up package downloads for apt-get,
 npm and rubygems.
 
 It works by doing very angry caching (forever!) for the actual package files.
-This should work ok as long as the package authors won't upload override
-already uploaded packages. For details review the [handler file](https://github.com/epeli/angry-caching-proxy/tree/master/handlers)
+This should work ok as long as the package authors won't override already
+uploaded packages. For details review the [handler
+files](https://github.com/epeli/angry-caching-proxy/tree/master/handlers).
 
 
 ## Install
