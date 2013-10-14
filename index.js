@@ -5,14 +5,15 @@ var filed = require("filed");
 var fs = require("fs");
 var path = require("path");
 var Q = require("q");
+var http = require("http");
 var request = require("request");
+var args = require("./args");
 
 var stat = Q.denodeify(fs.stat);
 var writeFile = Q.denodeify(fs.writeFile);
 var rename = Q.denodeify(fs.rename);
 
 Q.longStackSupport = true;
-
 
 var handlers = [
     require("./handlers/rubygems"),
@@ -55,7 +56,6 @@ app.use(function(req, res, next) {
 
 });
 
-app.listen(8000);
 
 function promiseFromStream(stream) {
     return Q.promise(function(resolve, reject) {
@@ -167,3 +167,9 @@ function cacheResponse(req, res) {
     });
 }
 
+
+
+var server = http.createServer(app);
+server.listen(Number(args.port) || 8000, function() {
+    console.log("Listening on", server.address().port);
+});
