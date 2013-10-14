@@ -40,7 +40,7 @@ app.use(function(req, res, next) {
 
     if (useCache) {
         cacheResponse(req, res).fail(function(err) {
-            console.log("Cache FAIL", toUrl(req), err);
+            console.log("Cache FAIL", req.url, err);
         });
         return;
     }
@@ -74,9 +74,6 @@ function promiseFromStream(stream) {
     });
 }
 
-function toUrl(req) {
-    return req.url;
-}
 
 function toCacheKey(req) {
     var h = crypto.createHash("sha1");
@@ -99,7 +96,7 @@ function writeMeta(origReq, clientRes) {
 }
 
 function createCache(req, res) {
-    console.log("Cache miss, creating", toUrl(req));
+    console.log("Cache miss, creating", req.url);
 
     var target = toCachePath(req);
     var tempTarget = target + "." + Math.random().toString(36).substring(7) +".tmp";
@@ -110,7 +107,7 @@ function createCache(req, res) {
     }
 
     var s = Date.now();
-    var clientRequest = request(toUrl(req));
+    var clientRequest = request(req.url);
 
     var cacheWrite = Q.promise(function(resolve, reject) {
         clientRequest.on("error", reject);
@@ -144,14 +141,14 @@ function createCache(req, res) {
 
     cachePromise.finally(function() {
         delete cachePromises[target];
-        console.log("Cache CREATED in", Date.now() - s, "ms for", toUrl(req), toCacheKey(req));
+        console.log("Cache CREATED in", Date.now() - s, "ms for", req.url, toCacheKey(req));
     });
 
     return cachePromise;
 }
 
 function respondFromCache(req, res) {
-    console.log("Cache hit for", toUrl(req), toCacheKey(req));
+    console.log("Cache hit for", req.url, toCacheKey(req));
 
     res.sendfile(toCachePath(req));
     return promiseFromStream(res);
