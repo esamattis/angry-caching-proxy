@@ -48,3 +48,7 @@ With npm it is required to use the non-https version of the registry
     http_proxy=http://localhost:8000 npm install --registry http://registry.npmjs.org/
 
 
+Cool guys can also set the proxy globally for everybody:
+
+    export http_proxy=http://localhost:8000
+
