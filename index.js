@@ -24,8 +24,6 @@ var handlers = [
 var cacheDir = args.directory || process.cwd() + "/acp-cache";
 var app = express();
 
-var cachePromises = {};
-
 app.use(function(req, res, next) {
 
     if (!req.headers.host) {
@@ -101,11 +99,6 @@ function createCache(req, res) {
     var target = toCachePath(req);
     var tempTarget = target + "." + Math.random().toString(36).substring(7) +".tmp";
 
-    var cachePromise = cachePromises[target];
-    if (cachePromises[target]) {
-        return cachePromise;
-    }
-
     var s = Date.now();
     var clientRequest = request(req.url);
 
@@ -118,6 +111,7 @@ function createCache(req, res) {
                 var file = filed(tempTarget);
 
                 resolve(Q.all([
+                    promiseFromStream(res),
                     writeMeta(req, clientRes),
                     promiseFromStream(file).then(function() {
                         return rename(tempTarget, target);
@@ -125,6 +119,8 @@ function createCache(req, res) {
                 ]));
 
                 clientRequest.pipe(file);
+            } else {
+                resolve(promiseFromStream(res));
             }
 
             // But always proxy the response to the client
@@ -134,13 +130,12 @@ function createCache(req, res) {
     });
 
 
-    cachePromises[target] = cachePromise = Q.all([
+    var cachePromise = Q.all([
         cacheWrite,
         promiseFromStream(clientRequest),
     ]);
 
     cachePromise.finally(function() {
-        delete cachePromises[target];
         console.log("Cache CREATED in", Date.now() - s, "ms for", req.url, toCacheKey(req));
     });
 
