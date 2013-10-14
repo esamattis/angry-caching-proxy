@@ -78,10 +78,14 @@ function toUrl(req) {
     return req.url;
 }
 
-function toCachePath(req) {
+function toCacheKey(req) {
     var h = crypto.createHash("sha1");
     h.update(req.url);
-    return path.join(cacheDir, h.digest("hex"));
+    return h.digest("hex");
+}
+
+function toCachePath(req) {
+    return path.join(cacheDir, toCacheKey(req));
 }
 
 function writeMeta(origReq, clientRes) {
@@ -124,14 +128,14 @@ function createCache(req, res) {
 
     cachePromise.finally(function() {
         delete cachePromises[target];
-        console.log("Cache CREATED in", Date.now() - s, "ms for", toUrl(req));
+        console.log("Cache CREATED in", Date.now() - s, "ms for", toUrl(req), toCacheKey(req));
     });
 
     return cachePromise;
 }
 
 function respondFromCache(req, res) {
-    console.log("Cache hit for", toUrl(req));
+    console.log("Cache hit for", toUrl(req), toCacheKey(req));
 
     res.sendfile(toCachePath(req));
     return promiseFromStreams(res);
