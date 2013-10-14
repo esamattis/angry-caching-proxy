@@ -15,7 +15,7 @@ Get node.js and type
 
     sudo npm install -g angry-caching-proxy
 
-or if you don't sudoing random code you can install it locally too:
+or if you don't like sudoing random code you can install it locally too:
 
     npm install angry-caching-proxy
 
