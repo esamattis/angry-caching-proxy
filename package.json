@@ -5,6 +5,9 @@
   "main": "index.js",
   "author": "Esa-Matti Suuronen <esa-matti@suuronen.org>",
   "license": "MIT",
+  "bin": {
+    "angry-caching-proxy": "./bin/angry-caching-proxy"
+  },
   "dependencies": {
     "request": "~2.27.0",
     "express": "~3.4.0",
