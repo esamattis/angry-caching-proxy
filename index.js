@@ -21,7 +21,7 @@ var handlers = [
     require("./handlers/apt-get")
 ];
 
-var cacheDir = __dirname + "/cache";
+var cacheDir = args.directory || process.cwd() + "/acp-cache";
 var app = express();
 
 var cachePromises = {};
@@ -172,4 +172,12 @@ function cacheResponse(req, res) {
 var server = http.createServer(app);
 server.listen(Number(args.port) || 8000, function() {
     console.log("Listening on", server.address().port);
+});
+
+var testWriteFile = path.join(cacheDir, "README");
+writeFile(testWriteFile, "Angry Caching Proxy cache files").then(function() {
+    console.log("Writing cached files to", cacheDir);
+}, function(err) {
+    console.log("Cannot write to", cacheDir, err);
+    process.exit(1);
 });
