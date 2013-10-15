@@ -1,0 +1,16 @@
+description "angry-caching-proxy"
+
+start on runlevel [23]
+stop on shutdown
+
+pre-start script
+    adduser --no-create-home --disabled-password --disabled-login --system --group acp
+    mkdir -p /var/lib/angry-caching-proxy
+    chown acp:acp /var/lib/angry-caching-proxy
+end script
+
+env NODE_ENV=production
+
+exec sudo -E -u acp angry-caching-proxy --directory /var/lib/angry-caching-proxy
+
+respawn
