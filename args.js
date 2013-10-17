@@ -11,7 +11,7 @@ var args= optimist
     .describe("p", "Port to listen")
 
     .alias("d", "cacheDir")
-    .alias("d", "dir")
+    .alias("directory", "cacheDir")
     .alias("h", "help")
     .describe("d", "Directory where to write cached files")
     .argv;
