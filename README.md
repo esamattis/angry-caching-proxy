@@ -26,9 +26,10 @@ and execute it with
 
 By default Angry Caching Proxy caches apt-get, npm and rubygems downloads.  If
 you want to add additional caching or disable build in cahces you can create
-`/etc/angry-caching-proxy/triggers.js` file with your own caching function triggers. It should
-export an object of functions that return `true` when the request should be
-cached. The caching occurs only if the upstream responds with http success status 200.
+`/etc/angry-caching-proxy/triggers.js` file with your own caching function
+triggers. It should export an object of functions that return `true` when the
+request should be cached. The caching occurs only if the upstream responds with
+http success status 200.
 
 Example:
 
