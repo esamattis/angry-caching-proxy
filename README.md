@@ -9,8 +9,8 @@ variable. So there is no need to have customized `sources.list`, `Gemfile` etc.
 It works by doing very angry caching (forever!) for the actual package files.
 This should be ok as long as the package authors won't override already
 uploaded packages. It is a very bad practice by package authors and happens
-rarely. If it happens anyway you can always clear the cache from a web
-interface.
+rarely. If it happens anyway you can always clear the cache from the web
+interface of Angry Caching Proxy.
 
 
 ## Install
