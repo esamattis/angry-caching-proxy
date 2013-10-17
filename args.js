@@ -1,4 +1,3 @@
-
 var optimist = require("optimist");
 var xtend = require("xtend");
 
@@ -23,7 +22,7 @@ if (args.help) {
 }
 
 try {
-    xtend(config, require("/etc/angry-caching-proxy/config.js"));
+    xtend(config, require("/etc/angry-caching-proxy/config.json"));
 } catch(err) { }
 
 module.exports = xtend(config, args);
