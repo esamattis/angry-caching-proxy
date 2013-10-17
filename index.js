@@ -25,7 +25,7 @@ app.set("views", __dirname + "/views");
 app.get("/", function(req, res, next) {
 
     readdir(args.directory).then(function(files) {
-        var allMeta = files.filter(function(filePath) {
+        var readPromises = files.filter(function(filePath) {
             return (/\.json$/).test(filePath);
         }).map(function(metaDataFile) {
             var metaDataFilePath = path.join(args.directory, metaDataFile);
@@ -43,7 +43,18 @@ app.get("/", function(req, res, next) {
                 });
         });
 
-        return Q.all(allMeta);
+        return Q.allSettled(readPromises).then(function(all) {
+            return all.filter(function(meta) {
+                if (meta.state === "fulfilled") {
+                    return true;
+                } else {
+                    console.error("Failed to read", meta);
+                    return false;
+                }
+            }).map(function(meta) {
+                return meta.value;
+            });
+        });
     }).then(function(files) {
         var total = files.reduce(function(memo, file) {
             return memo + file.size;
@@ -93,7 +104,7 @@ server.listen(Number(args.port) || 8000, function() {
 
 var testWriteFile = path.join(args.dir, "README");
 writeFile(testWriteFile, "Angry Caching Proxy cache files").then(function() {
-    console.log("Writing cached files to", args.dir);
+    console.log("Using cache directory", args.dir);
 }, function(err) {
     console.log("Cannot write to", args.dir, err);
     process.exit(1);
