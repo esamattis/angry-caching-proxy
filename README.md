@@ -60,6 +60,9 @@ and start the server
 
     angry-caching-proxy --directory cache
 
+You can inspect and clear the cache by browsing directly to the proxy address
+http://localhost:8000
+
 ### apt-get
 
     http_proxy=http://localhost:8000 sudo -E apt-get install sl
