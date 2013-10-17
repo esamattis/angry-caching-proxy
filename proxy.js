@@ -47,7 +47,7 @@ function angryCachingProxy(req, res, next) {
 
     if (useCache) {
         cacheResponse(req, res).fail(function(err) {
-            console.log("Cache FAIL", req.url, err);
+            console.log("Cache FAIL", req.method, req.url, err);
         });
         return;
     }
@@ -106,6 +106,7 @@ function writeMeta(origReq, clientRes) {
     return writeFile(
         toCachePath(origReq) + ".json",
         JSON.stringify({
+            method: origReq.req,
             url: origReq.url,
             headers: clientRes.headers
         }, null, "    ")
@@ -113,7 +114,7 @@ function writeMeta(origReq, clientRes) {
 }
 
 function createCache(req, res) {
-    console.log("Cache miss, creating", req.url);
+    console.log("Cache miss", req.method, req.url);
 
     var target = toCachePath(req);
     var tempTarget = target + "." + Math.random().toString(36).substring(7) +".tmp";
@@ -155,14 +156,14 @@ function createCache(req, res) {
     ]);
 
     cachePromise.finally(function() {
-        console.log("Cache CREATED in", Date.now() - s, "ms for", req.url, toCacheKey(req));
+        console.log("Cache CREATED in", Date.now() - s, "ms for", req.method, req.url, toCacheKey(req));
     });
 
     return cachePromise;
 }
 
 function respondFromCache(req, res) {
-    console.log("Cache hit for", req.url, toCacheKey(req));
+    console.log("Cache hit for", req.method, req.url, toCacheKey(req));
 
     res.sendfile(toCachePath(req));
     return promiseFromStream(res);

@@ -20,6 +20,7 @@
 
       <table>
           <tr>
+              <th>method</th>
               <th>cached url</th>
               <th>bytes</th>
               <th>url sha1</th>
@@ -27,6 +28,7 @@
 
           {{#each files}}
           <tr class="url-row">
+              <td>{{method}}</td>
               <td>{{url}}</td>
               <td>{{size}}</td>
               <td>{{sha1}}</td>
