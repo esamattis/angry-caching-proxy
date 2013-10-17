@@ -74,6 +74,11 @@ app.get("/client.js", function(req, res) {
     res.sendfile(__dirname + "/client.js");
 });
 
+app.get("/req/:sha1", function(req, res, next) {
+    var filePath = path.join(args.directory, req.params.sha1);
+    res.sendfile(filePath);
+});
+
 app.delete("/req/:sha1", function(req, res, next) {
     var filePath = path.join(args.directory, req.params.sha1);
 
