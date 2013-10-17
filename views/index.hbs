@@ -1,0 +1,36 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Angry Caching Proxy</title>
+        <style type="text/css" media="screen">
+            table {
+                text-align: left;
+            }
+        </style>
+    </head>
+    <body>
+        <a href="https://github.com/epeli/angry-caching-proxy"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"></a>
+      <h1>Angry Caching Proxy</h1>
+
+      <p>Cached requests in {{cacheDir}}</p>
+
+      <table>
+          <tr>
+              <th>cached url</th>
+              <th>bytes</th>
+              <th>url sha1</th>
+          </tr>
+
+          {{#each files}}
+          <tr>
+              <td>{{this.url}}</td>
+              <td>{{this.size}}</td>
+              <td>{{this.sha1}}</td>
+          </tr>
+          {{/each}}
+
+
+      </table>
+    </body>
+</html>

@@ -4,12 +4,15 @@ var fs = require("graceful-fs");
 var path = require("path");
 var Q = require("q");
 var http = require("http");
+var xtend = require("xtend");
 var args = require("./args");
 
 var writeFile = Q.denodeify(fs.writeFile);
+var readFile = Q.denodeify(fs.readFile);
+var readdir = Q.denodeify(fs.readdir);
+var stat = Q.denodeify(fs.stat);
 
 Q.longStackSupport = true;
-
 
 
 var app = express();
@@ -17,10 +20,37 @@ var app = express();
 app.set("view engine", "hbs");
 app.set("views", __dirname + "/views");
 
-app.get("/", function(req, res) {
-    res.render("index", {
-        foo: "SDAFASF"
-    });
+app.get("/", function(req, res, next) {
+
+    readdir(args.directory).then(function(files) {
+        var allMeta = files.filter(function(filePath) {
+            return (/\.json$/).test(filePath);
+        }).map(function(metaDataFile) {
+            var metaDataFilePath = path.join(args.directory, metaDataFile);
+            var fileName = metaDataFile.replace(/\.json$/, "");
+
+            var meta = readFile(metaDataFilePath).then(function(data) {
+                return JSON.parse(data.toString());
+            });
+
+            return Q.all([meta, stat(metaDataFilePath.replace(/\.json$/, ""))])
+                .spread(function(metaData, fileStat) {
+                    return xtend(metaData, fileStat, {
+                        sha1: fileName
+                    });
+                });
+        });
+
+        return Q.all(allMeta);
+    }).then(function(files) {
+        console.log("FileS", files);
+        res.render("index", {
+            cacheDir: args.directory,
+            files: files
+        });
+    }, next);
+
+
 });
 
 
