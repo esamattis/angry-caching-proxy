@@ -6,6 +6,7 @@ var Q = require("q");
 var http = require("http");
 var xtend = require("xtend");
 var args = require("./args");
+var filesize = require("filesize");
 
 var writeFile = Q.denodeify(fs.writeFile);
 var readFile = Q.denodeify(fs.readFile);
@@ -43,9 +44,14 @@ app.get("/", function(req, res, next) {
 
         return Q.all(allMeta);
     }).then(function(files) {
+        var total = files.reduce(function(memo, file) {
+            return memo + file.size;
+        }, 0);
+
         res.render("index", {
             cacheDir: args.directory,
-            files: files
+            files: files,
+            total: filesize(total)
         });
     }, next);
 
