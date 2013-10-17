@@ -7,6 +7,8 @@ var path = require("path");
 var Q = require("q");
 var http = require("http");
 var request = require("request");
+var url = require("url");
+var xtend = require("xtend");
 var args = require("./args");
 
 var stat = Q.denodeify(fs.stat);
@@ -26,6 +28,11 @@ var app = express();
 
 app.use(function(req, res, next) {
 
+    var u = url.parse(req.url);
+    if (!u.host) {
+        return next();
+    }
+
     if (!req.headers.host) {
         var msg = "Bad request, no host is set for " + req.url;
         console.log(msg);
@@ -43,15 +50,21 @@ app.use(function(req, res, next) {
         return;
     }
 
-    console.log("Proxying", req.url);
+    console.log("Proxying", req.method, req.url);
     request({
         url: req.url,
-        headers: req.headers
+        headers: xtend({
+            "X-Proxy": "angry-caching-proxy"
+        }, req.headers)
     }).on("error", function(err) {
         res.end("Upstream failed", 500);
     }).pipe(res);
 
 
+});
+
+app.get("/", function(req, res) {
+    res.sendfile(__dirname + "/index.html");
 });
 
 
