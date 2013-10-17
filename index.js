@@ -43,7 +43,6 @@ app.get("/", function(req, res, next) {
 
         return Q.all(allMeta);
     }).then(function(files) {
-        console.log("FileS", files);
         res.render("index", {
             cacheDir: args.directory,
             files: files
