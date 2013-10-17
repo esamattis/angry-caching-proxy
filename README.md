@@ -1,10 +1,10 @@
 # Angry Caching Proxy
 
-Make package downloads lightning fast for apt-get, npm and rubygems!
+Make package downloads lightning fast for apt-get, npm and Rubygems!
 
 Angry Caching Proxy is forwarding proxy for various package managers. It is
 configured transparently to the clients using the `http_proxy` environment
-variable. So there is no need to have customized `sources.list`, `Gemfile` etc.
+variable. So there is no need to have customized sources.list, Gemfile etc.
 
 It works by doing very angry caching (forever!) for the actual package files.
 This should be ok as long as the package authors won't override already
@@ -74,7 +74,7 @@ You can inspect and clear the cache by browsing directly to the proxy address
 
     http_proxy=http://localhost:8000 sudo -E apt-get install sl
 
-### Bundler
+### Bundler (Rubygems)
 
     http_proxy=http://localhost:8000 bundle install
 
