@@ -15,11 +15,18 @@ var stat = Q.denodeify(fs.stat);
 var writeFile = Q.denodeify(fs.writeFile);
 var rename = Q.denodeify(fs.rename);
 
-var handlers = [
-    require("./handlers/rubygems"),
-    require("./handlers/npm"),
-    require("./handlers/apt-get")
-];
+
+var proxyConfig = require("./proxyconfig");
+
+try {
+    xtend(proxyConfig, require("/etc/angry-caching-proxy.js"));
+} catch(err) { }
+
+var handlers = Object.keys(proxyConfig).sort().map(function(key) {
+    return proxyConfig[key];
+}).filter(function(h) {
+    return typeof(h) === "function";
+});
 
 function angryCachingProxy(req, res, next) {
 

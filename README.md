@@ -26,6 +26,30 @@ and execute it with
 
     node_modules/.bin/angry-caching-proxy
 
+## Configuration
+
+By default Angry Caching Proxy cached apt-get, npm and rubygems downloads.  If
+you want to add additional caching or disable build in cahces you can create
+`/etc/angry-caching-proxy.js` file with your own caching functions.  It should
+export an object of functions that return `true` or `false`.
+
+Example:
+
+```javascript
+module.exports = {
+    "custom": function(req, res) {
+        // Cache all requests that contain X-My-Cache header
+        return req.headers["X-My-Cache"]);
+    },
+
+    // disable npm caching
+    "npm": null
+
+};
+
+```
+
+
 ## Usage
 
 Create directory where to save cached files
