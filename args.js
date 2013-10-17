@@ -1,12 +1,17 @@
 
 var optimist = require("optimist");
+var xtend = require("xtend");
+
+var config = {
+    cacheDir: process.cwd() + "/angry-caching-proxy"
+};
 
 var args= optimist
     .usage("Start Argry Caching Proxy.\n\nUsage: $0")
     .alias("p", "port")
     .describe("p", "Port to listen")
 
-    .alias("d", "directory")
+    .alias("d", "cacheDir")
     .alias("d", "dir")
     .alias("h", "help")
     .describe("d", "Directory where to write cached files")
@@ -17,6 +22,8 @@ if (args.help) {
     process.exit(0);
 }
 
-args.directory = args.directory || process.cwd() + "/acp-cache";
+try {
+    xtend(config, require("/etc/angry-caching-proxy/config.js"));
+} catch(err) { }
 
-module.exports = args;
+module.exports = xtend(config, args);

@@ -16,14 +16,14 @@ var writeFile = Q.denodeify(fs.writeFile);
 var rename = Q.denodeify(fs.rename);
 
 
-var proxyConfig = require("./proxyconfig");
+var triggers = require("./defaulttriggers");
 
 try {
-    xtend(proxyConfig, require("/etc/angry-caching-proxy.js"));
+    xtend(triggers, require("/etc/angry-caching-proxy/triggers.js"));
 } catch(err) { }
 
-var handlers = Object.keys(proxyConfig).sort().map(function(key) {
-    return proxyConfig[key];
+triggers = Object.keys(triggers).sort().map(function(key) {
+    return triggers[key];
 }).filter(function(h) {
     return typeof(h) === "function";
 });
@@ -41,8 +41,8 @@ function angryCachingProxy(req, res, next) {
         return next(new Error(msg));
     }
 
-    var useCache = handlers.some(function(h) {
-        return h(req, res);
+    var useCache = triggers.some(function(trigger) {
+        return trigger(req, res);
     });
 
     if (useCache) {

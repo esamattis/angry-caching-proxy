@@ -1,7 +1,7 @@
 
 module.exports = {
 
-    "apt-get": function(req, res) {
+    "apt-get": function isDebRequest(req, res) {
 
         // Cache all archive.ubuntu.com, fi.archive.ubuntu.com etc. requests
         if (!/^.*archive.ubuntu.com$/.test(req.headers.host)) return false;
@@ -14,7 +14,7 @@ module.exports = {
     },
 
 
-    "npm": function(req, res) {
+    "npm": function isNodeModuleRequest(req, res) {
 
         if (req.headers.host !== "registry.npmjs.org") return false;
 
@@ -28,7 +28,7 @@ module.exports = {
     },
 
 
-    "rubygems": function(req, res) {
+    "rubygems": function isRubyGemRequest(req, res) {
         var hosts = {
             "rubygems.org": true,
             "rubygems.global.ssl.fastly.net": true
