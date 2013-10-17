@@ -8,10 +8,6 @@ uploaded packages. It is a very bad practice by package authors and happens
 rarely and if it happens you can jus clear the cache always.
 
 
-For details review the [handler
-files](https://github.com/epeli/angry-caching-proxy/tree/master/handlers).
-
-
 ## Install
 
 Get node.js and type
@@ -48,6 +44,10 @@ module.exports = {
 };
 
 ```
+
+See
+[proxyconfig.js](https://github.com/epeli/angry-caching-proxy/blob/master/proxyconfig.js)
+for additional examples.
 
 
 ## Usage
