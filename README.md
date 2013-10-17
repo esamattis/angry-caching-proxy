@@ -59,7 +59,7 @@ for additional examples.
 
 ## Usage
 
-Create directory where to save cached files
+Create directory where to save cached requests
 
     mkdir cache
 
