@@ -99,7 +99,7 @@ function toCacheKey(req) {
 }
 
 function toCachePath(req) {
-    return path.join(args.dir, toCacheKey(req));
+    return path.join(args.cacheDir, toCacheKey(req));
 }
 
 function writeMeta(origReq, clientRes) {
