@@ -36,6 +36,7 @@ module.exports = {
 
         if (!hosts[req.headers.host]) return false;
 
+        // Example: http://rubygems.org/gems/actionmailer-3.2.14.gem
         if (/^.*\.gem$/.test(req.url)) {
             return true;
         }
