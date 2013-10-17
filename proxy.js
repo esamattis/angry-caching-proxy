@@ -110,7 +110,8 @@ function writeMeta(origReq, clientRes) {
             method: origReq.method,
             url: origReq.url,
             created: new Date(),
-            headers: clientRes.headers
+            responseHeaders: clientRes.headers,
+            requestHeaders: origReq.headers
         }, null, "    ")
   );
 }
