@@ -11,6 +11,7 @@ var filesize = require("filesize");
 var writeFile = Q.denodeify(fs.writeFile);
 var readFile = Q.denodeify(fs.readFile);
 var readdir = Q.denodeify(fs.readdir);
+var unlink = Q.denodeify(fs.unlink);
 var stat = Q.denodeify(fs.stat);
 
 Q.longStackSupport = true;
@@ -56,6 +57,30 @@ app.get("/", function(req, res, next) {
     }, next);
 
 
+});
+
+app.get("/client.js", function(req, res) {
+    res.sendfile(__dirname + "/client.js");
+});
+
+app.delete("/req/:sha1", function(req, res, next) {
+    var filePath = path.join(args.directory, req.params.sha1);
+
+    console.log("Deleting", filePath);
+    Q.all([unlink(filePath), unlink(filePath + ".json")]).then(function() {
+        res.json({ deleted: filePath });
+    }, next);
+
+});
+
+app.post("/deleteall", function(req, res, next) {
+    readdir(args.directory).then(function(files) {
+        return Q.all(files.map(function(filePath) {
+            return unlink(path.join(args.directory, filePath));
+        }));
+    }).then(function() {
+        res.redirect("/");
+    }, next);
 });
 
 

@@ -7,6 +7,9 @@
             table {
                 text-align: left;
             }
+            .deleted {
+                text-decoration: line-through;
+            }
         </style>
     </head>
     <body>
@@ -23,10 +26,11 @@
           </tr>
 
           {{#each files}}
-          <tr>
-              <td>{{this.url}}</td>
-              <td>{{this.size}}</td>
-              <td>{{this.sha1}}</td>
+          <tr class="url-row">
+              <td>{{url}}</td>
+              <td>{{size}}</td>
+              <td>{{sha1}}</td>
+              <td><button class="delete" data-sha1="{{sha1}}" >delete</button></td>
           </tr>
           {{/each}}
 
@@ -34,9 +38,15 @@
               <th></th>
               <th>Total {{total}}</th>
               <th></th>
+              <th>
+                  <form action="/deleteall" method="post" accept-charset="utf-8">
+                      <p><input type="submit" value="delete all"></p>
+                  </form>
+              </th>
           </tr>
 
 
       </table>
     </body>
+    <script type="text/javascript" charset="utf-8" src="/client.js"> </script>
 </html>
