@@ -9,6 +9,7 @@ var http = require("http");
 var request = require("request");
 var url = require("url");
 var xtend = require("xtend");
+var promisePipe = require("promisepipe");
 var args = require("./args");
 
 var stat = Q.denodeify(fs.stat);
@@ -51,15 +52,24 @@ app.use(function(req, res, next) {
     }
 
     console.log("Proxying", req.method, req.url);
-    request({
-        url: req.url,
-        headers: xtend({
-            "X-Proxy": "angry-caching-proxy"
-        }, req.headers)
-    }).on("error", function(err) {
-        res.end("Upstream failed", 500);
-    }).pipe(res);
+    promisePipe(
+        req,
+        request({
+                method: req.method,
+                url: req.url,
+                headers: xtend({
+                    "X-Proxy": "angry-caching-proxy"
+                }, req.headers)
+            }),
+        res
+    ).fail(function(err) {
+        console.error("Proxying failed:", err.message, req.method, req.url);
+        res.write("Angry Caching Proxy - Upstream failed: " + err.message);
+        res.end("\n", 500);
 
+        // Ensure that this connection gets closed
+        req.setTimeout(100);
+    });
 
 });
 
