@@ -35,7 +35,7 @@ Example:
 
 ```javascript
 module.exports = {
-    "custom": function isMyCustomCacheReq(req, res) {
+    "custom": function isMyCustomCacheRequest(req, res) {
         // Cache all requests that contain X-My-Cache header
         return req.headers["X-My-Cache"]);
     },
@@ -48,7 +48,7 @@ module.exports = {
 ```
 
 See
-[proxyconfig.js](https://github.com/epeli/angry-caching-proxy/blob/master/proxyconfig.js)
+[defaulttriggers.js](https://github.com/epeli/angry-caching-proxy/blob/master/defaulttriggers.js)
 for additional examples.
 
 
@@ -63,7 +63,7 @@ and start the server
     angry-caching-proxy --directory cache
 
 You can inspect and clear the cache by browsing directly to the proxy address
-http://localhost:8000
+<http://localhost:8000>
 
 ### apt-get
 
