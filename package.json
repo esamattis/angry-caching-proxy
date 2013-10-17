@@ -19,6 +19,8 @@
     "filed": "~0.1.0",
     "optimist": "~0.6.0",
     "xtend": "~2.1.1",
-    "promisepipe": "~1.0.1"
+    "promisepipe": "~1.0.1",
+    "graceful-fs": "~2.0.1",
+    "hbs": "~2.4.0"
   }
 }

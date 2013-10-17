@@ -7,6 +7,7 @@ var args= optimist
     .describe("p", "Port to listen")
 
     .alias("d", "directory")
+    .alias("d", "dir")
     .alias("h", "help")
     .describe("d", "Directory where to write cached files")
     .argv;
@@ -16,5 +17,6 @@ if (args.help) {
     process.exit(0);
 }
 
+args.directory = args.directory || process.cwd() + "/acp-cache";
 
 module.exports = args;
