@@ -106,8 +106,10 @@ function writeMeta(origReq, clientRes) {
     return writeFile(
         toCachePath(origReq) + ".json",
         JSON.stringify({
+            sha1: toCacheKey(origReq),
             method: origReq.method,
             url: origReq.url,
+            created: new Date(),
             headers: clientRes.headers
         }, null, "    ")
   );

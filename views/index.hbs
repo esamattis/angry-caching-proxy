@@ -33,7 +33,7 @@
               <th>method</th>
               <th>cached url</th>
               <th>bytes</th>
-              <th>url sha1</th>
+              <th>created</th>
           </tr>
 
           {{#each files}}
@@ -42,7 +42,7 @@
               <td>{{method}}</td>
               <td>{{url}}</td>
               <td>{{size}}</td>
-              <td>{{sha1}}</td>
+              <td>{{created}}</td>
               <td><a href="/req/{{sha1}}.json">meta</a></td>
           </tr>
           {{/each}}
