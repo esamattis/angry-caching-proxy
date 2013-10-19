@@ -14,6 +14,16 @@ uploaded packages. It is a very bad practice by the package authors and happens
 very rarely. If it happens anyway you can always clear the cache from the web
 interface of Angry Caching Proxy.
 
+## Use cases
+
+Installing or upgrading multiple Ubuntu machines. In the worst case you have to
+download gigabytes of .deb packages for each machine. With Angry Caching Proxy
+the packages are downloaded once and then served instantly from the cache.
+
+When doing distributed builds it might hard to share local disk caches.
+
+Just speed up your local `bundle install` runs.
+
 
 ## Install
 
