@@ -6,6 +6,7 @@ var CACHE_DIR = __dirname + "/cache";
 
 var express = require("express");
 var http = require("http");
+var url = require("url");
 var proxy = require("../proxy");
 var assert = require("assert");
 var fs = require("fs");
@@ -45,7 +46,8 @@ var proxyApp = express();
 
 proxyApp.use(proxy([
     function(req, res) {
-        return (/data$/).test(req.url);
+        var u = url.parse(req.url);
+        return (/data$/).test(u.pathname);
     }
 ], CACHE_DIR));
 
@@ -138,8 +140,31 @@ describe("Angry Caching Proxy", function() {
                     "Bad x-cache hit header: "+ res.headers["x-cache"]
                 );
 
-
                 assert.equal(prevBody, body);
+                done();
+            });
+        });
+    });
+
+    it("creates different caches for different querytrings", function(done) {
+        request({
+            method: "GET",
+            url: appUrl("/data?foo=bar")
+        }, function(err, res, body) {
+            if (err) return done(err);
+            assert(body.match(/^RES/));
+            var prevBody = body;
+            assert(
+                /^Miss /.test(res.headers["x-cache"]),
+                "Bad x-cache hit header: "+ res.headers["x-cache"]
+            );
+            request({
+                method: "GET",
+                url: appUrl("/data?foo=baz")
+            }, function(err, res, body) {
+                if (err) return done(err);
+                assert(body.match(/^RES/));
+                assert.notEqual(prevBody, body);
                 done();
             });
         });
