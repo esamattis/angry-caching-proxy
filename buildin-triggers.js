@@ -31,6 +31,7 @@ module.exports = {
     "rubygems": function isRubyGemRequest(req, res) {
         var hosts = {
             "rubygems.org": true,
+            "production.cf.rubygems.org": true,
             "rubygems.global.ssl.fastly.net": true
         };
 
@@ -38,6 +39,11 @@ module.exports = {
 
         // Example: http://rubygems.org/gems/actionmailer-3.2.14.gem
         if (/^.*\.gem$/.test(req.url)) {
+            return true;
+        }
+
+        // http://rubygems.org/quick/Marshal.4.8/eventmachine-1.0.3-java.gemspec.rz
+        if (/^.*\.gemspec\.rz/.test(req.url)) {
             return true;
         }
     }
