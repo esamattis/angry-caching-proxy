@@ -52,7 +52,7 @@ module.exports = function(triggerFns, cacheDir) {
 
     function createCache(req, res) {
         console.log("Cache miss", req.method, req.url);
-        res.setHeader("x-proxy-cache", "miss");
+        res.setHeader("X-Cache", "Miss " + toCacheKey(req));
 
         var target = toCachePath(req);
         var tempTarget = target + "." + Math.random().toString(36).substring(7) +".tmp";
@@ -78,7 +78,6 @@ module.exports = function(triggerFns, cacheDir) {
 
                     clientRequest.pipe(file);
                 } else {
-                    res.setHeader("x-proxy-cache", "no");
                     resolve(promiseFromStream(res));
                 }
 
@@ -103,7 +102,7 @@ module.exports = function(triggerFns, cacheDir) {
 
     function respondFromCache(req, res) {
         console.log("Cache hit for", req.method, req.url, toCacheKey(req));
-        res.setHeader("x-proxy-cache", "hit");
+        res.setHeader("X-Cache", "Hit " + toCacheKey(req));
 
 
         res.sendfile(toCachePath(req));
@@ -141,14 +140,11 @@ module.exports = function(triggerFns, cacheDir) {
             return trigger(req, res);
         });
 
-        // res.setHeader("X-proxy-cache", useCache.toString());
         if (useCache && req.method === "GET") {
             cacheResponse(req, res).fail(function(err) {
                 console.log("Cache FAIL", req.method, req.url, err);
             });
             return;
-        } else {
-            res.setHeader("x-proxy-cache", "no");
         }
 
         console.log("Proxying", req.method, req.url);
