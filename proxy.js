@@ -137,7 +137,7 @@ module.exports = function(triggerFns, cacheDir) {
         });
 
         res.setHeader("X-proxy-cache", useCache.toString());
-        if (useCache) {
+        if (useCache && req.method === "GET") {
             cacheResponse(req, res).fail(function(err) {
                 console.log("Cache FAIL", req.method, req.url, err);
             });
