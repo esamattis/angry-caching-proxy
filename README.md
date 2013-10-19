@@ -77,6 +77,7 @@ See
 [buildin-triggers.js](https://github.com/epeli/angry-caching-proxy/blob/master/buildin-triggers.js)
 for examples.
 
+New build-in triggers are also welcome as a pull request.
 
 ## Usage
 
