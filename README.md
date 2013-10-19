@@ -41,12 +41,25 @@ and execute it with
 
 ## Configuration
 
-By default Angry Caching Proxy caches apt-get, npm and rubygems downloads. If
-you want to add additional caching or disable build in cahces you can create
-`/etc/angry-caching-proxy/triggers.js` file with your own caching function
-triggers. It should export an object of functions that return `true` when the
-request should be cached. The caching occurs only if the upstream responds with
-http success status 200.
+Create `/etc/angry-caching-proxy/config.json` with any of the following keys:
+
+  - `directory`: Where to store cached requests.
+  - `port`: Port to listen.
+    - default: 8080
+  - `workes`: Workers to use. Default to machine cpu core count.
+  - `customTriggers`: Path to custom triggers module.
+    - default: /etc/angry-caching-proxy/triggers.js
+  - `triggers`: Array of triggers to activate.
+    - default `["apt-get", "npm","rubygems"]`
+
+
+## Custom triggers
+
+ If you want to add additional caching you can create
+ `/etc/angry-caching-proxy/triggers.js` file with your own caching functions.
+ It should export an object of functions that return `true` when the request
+ should be cached. The caching occurs only if the upstream responds with http
+ success status 200. Only GET requests can be cached.
 
 Example:
 
@@ -56,17 +69,13 @@ module.exports = {
         // Cache all requests that contain X-My-Cache header
         return req.headers["X-My-Cache"]);
     },
-
-    // disable buildin npm caching
-    "npm": null
-
 };
 
 ```
 
 See
-[defaulttriggers.js](https://github.com/epeli/angry-caching-proxy/blob/master/defaulttriggers.js)
-for additional examples.
+[buildin-triggers.js](https://github.com/epeli/angry-caching-proxy/blob/master/buildin-triggers.js)
+for examples.
 
 
 ## Usage
