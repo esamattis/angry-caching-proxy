@@ -103,7 +103,7 @@ app.post("/deleteall", function(req, res, next) {
 
 
 var server = http.createServer(app);
-server.listen(Number(config.port) || 8000, function() {
+server.listen(Number(config.port), function() {
     console.log("PID", process.pid, "is listening on port", server.address().port);
 });
 
