@@ -104,7 +104,7 @@ app.post("/deleteall", function(req, res, next) {
 
 var server = http.createServer(app);
 server.listen(Number(config.port) || 8000, function() {
-    console.log("Listening on", server.address().port);
+    console.log("PID", process.pid, "is listening on port", server.address().port);
 });
 
 var testWriteFile = path.join(config.directory, "README");

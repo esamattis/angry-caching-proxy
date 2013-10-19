@@ -1,10 +1,12 @@
 var optimist = require("optimist");
 var xtend = require("xtend");
+var os = require("os");
 
 var config = {
     directory: process.cwd() + "/angry-caching-proxy",
     customTriggers: "/etc/angry-caching-proxy/triggers.js",
     port: 8080,
+    workers: os.cpus().length,
     triggers: [
         "apt-get",
         "npm",
@@ -27,6 +29,9 @@ var args = optimist
 
     .describe("triggers", "Triggers to activate. Can be defined multiple times.")
     .alias("t", "triggers")
+
+    .describe("workers", "How many node.js processes to use as workes. Defaults to your cpu core count.")
+    .alias("w", "workers")
 
     .alias("h", "help")
     .argv;
@@ -52,5 +57,4 @@ config.triggerFns = config.triggers.filter(function(triggerName) {
     return typeof(h) === "function";
 });
 
-console.log("CONFIG:", config);
 module.exports = config;
