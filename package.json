@@ -9,6 +9,9 @@
     "type": "git",
     "url": "http://github.com/epeli/angry-caching-proxy.git"
   },
+  "scripts": {
+    "test": "mocha --reporter spec test/"
+  },
   "bin": {
     "angry-caching-proxy": "./bin/angry-caching-proxy"
   },
