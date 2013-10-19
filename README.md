@@ -2,7 +2,7 @@
 
 # Angry Caching Proxy
 
-Make package downloads lightning fast for apt-get, npm and Rubygems!
+Make package downloads lightning fast for apt-get, npm, pip and Rubygems!
 
 Angry Caching Proxy is forwarding proxy for various package managers. It is
 configured transparently to the clients using the `http_proxy` environment
@@ -106,6 +106,9 @@ With npm it is required to use the non-https version of the registry
 
     http_proxy=http://localhost:8000 npm install --registry http://registry.npmjs.org/
 
+### Python pip
+
+    http_proxy=http://localhost:8000 pip install plone
 
 Cool guys can also set the proxy globally for everybody:
 

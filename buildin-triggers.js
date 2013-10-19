@@ -46,6 +46,20 @@ module.exports = {
         if (/^.*\.gemspec\.rz/.test(req.url)) {
             return true;
         }
+    },
+
+    "pypi": function isPypiRequest(req, res) {
+        var hosts = {
+            "pypi.python.org": true
+        };
+
+        if (!hosts[req.headers.host]) return false;
+
+        // http://pypi.python.org/packages/source/P/Products.DCWorkflow/Products.DCWorkflow-2.3.0-beta.tar.gz
+        // http://pypi.python.org/packages/source/P/Products.PloneTestCase/Products.PloneTestCase-0.9.17.zip
+        var eggUrl = /^.*packages\/source\/.*(\.tar\.gz|\.zip)$/;
+        return eggUrl.test(req.url);
+
     }
 
 };

@@ -10,6 +10,7 @@ var config = {
     triggers: [
         "apt-get",
         "npm",
+        "pypi",
         "rubygems"
     ]
 };
