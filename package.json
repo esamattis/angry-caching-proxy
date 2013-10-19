@@ -23,5 +23,9 @@
     "graceful-fs": "~2.0.1",
     "hbs": "~2.4.0",
     "filesize": "~2.0.0"
+  },
+  "devDependencies": {
+    "mocha": "~1.13.0",
+    "rimraf": "~2.2.2"
   }
 }
