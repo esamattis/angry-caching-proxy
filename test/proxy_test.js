@@ -77,6 +77,7 @@ describe("Angry Caching Proxy", function() {
             method: "GET",
             url: appUrl("/data")
         }, function(err, res, body) {
+            if (err) return done(err);
             assert(
                 /^Angry Caching Proxy/.test(res.headers.via),
                 "Bad via header: "+ res.headers.via
@@ -93,6 +94,7 @@ describe("Angry Caching Proxy", function() {
                 foo: "bar"
             }
         }, function(err, res, body) {
+            if (err) return done(err);
             assert.equal(body, "foo=bar");
             done();
         });
@@ -103,6 +105,7 @@ describe("Angry Caching Proxy", function() {
             method: "PUT",
             url: appUrl("/echo"),
         }, function(err, res, body) {
+            if (err) return done(err);
             assert.equal(body, "foo");
             done();
         });
@@ -115,6 +118,7 @@ describe("Angry Caching Proxy", function() {
             method: "GET",
             url: appUrl("/data")
         }, function(err, res, body) {
+            if (err) return done(err);
             assert(body.match(/^RES/));
             assert.equal(res.headers["x-proxy-cache"], "miss");
             var prevBody = body;
@@ -122,6 +126,7 @@ describe("Angry Caching Proxy", function() {
                 method: "GET",
                 url: appUrl("/data")
             }, function(err, res, body) {
+                if (err) return done(err);
                 assert(body.match(/^RES/));
                 assert.equal(res.headers["x-proxy-cache"], "hit");
                 assert.equal(prevBody, body);
@@ -161,6 +166,7 @@ describe("Angry Caching Proxy", function() {
                 method: opts.method,
                 url: appUrl(opts.path)
             }, function(err, res, body) {
+                if (err) return done(err);
                 assert(body.match(/^RES/));
                 assert.equal(res.headers["x-proxy-cache"], "no");
                 var prevBody = body;
@@ -168,6 +174,7 @@ describe("Angry Caching Proxy", function() {
                     method: opts.method,
                     url: appUrl(opts.path)
                 }, function(err, res, body) {
+                    if (err) return done(err);
                     assert(body.match(/^RES/));
                     assert.equal(res.headers["x-proxy-cache"], "no");
                     assert.notEqual(prevBody, body, "It was cached!");
