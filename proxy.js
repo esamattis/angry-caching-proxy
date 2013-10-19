@@ -15,82 +15,14 @@ var stat = Q.denodeify(fs.stat);
 var writeFile = Q.denodeify(fs.writeFile);
 var rename = Q.denodeify(fs.rename);
 
-
-var triggers = require("./defaulttriggers");
-
-try {
-    xtend(triggers, require("/etc/angry-caching-proxy/triggers.js"));
-} catch(err) { }
-
-triggers = Object.keys(triggers).sort().map(function(key) {
-    return triggers[key];
-}).filter(function(h) {
-    return typeof(h) === "function";
-});
-
-function angryCachingProxy(req, res, next) {
-
-    var u = url.parse(req.url);
-    if (!u.host) {
-        return next();
-    }
-
-    if (!req.headers.host) {
-        var msg = "Bad request, no host is set for " + req.url;
-        console.log(msg);
-        return next(new Error(msg));
-    }
-
-    var useCache = triggers.some(function(trigger) {
-        return trigger(req, res);
-    });
-
-    if (useCache) {
-        cacheResponse(req, res).fail(function(err) {
-            console.log("Cache FAIL", req.method, req.url, err);
-        });
-        return;
-    }
-
-    console.log("Proxying", req.method, req.url);
-    promisePipe(
-        req,
-        request({
-                method: req.method,
-                url: req.url,
-                headers: xtend({
-                    "X-Proxy": "angry-caching-proxy"
-                }, req.headers)
-            }),
-        res
-    ).fail(function(err) {
-        console.error("Proxying failed:", err.message, req.method, req.url);
-        res.write("Angry Caching Proxy - Upstream failed: " + err.message);
-        res.end("\n", 500);
-
-        // Ensure that this connection gets closed
-        req.setTimeout(100);
-    });
-
-}
-
 function promiseFromStream(stream) {
     return Q.promise(function(resolve, reject) {
         stream.on("error", reject);
-
-        // This event fires when no more data will be provided.
         stream.on("end", resolve);
-
-        // Emitted when the underlying resource (for example, the backing file
-        // descriptor) has been closed. Not all streams will emit this.
         stream.on("close", resolve);
-
-        // When the end() method has been called, and all data has been flushed
-        // to the underlying system, this event is emitted.
         stream.on("finish", resolve);
     });
 }
-
 
 function toCacheKey(req) {
     var h = crypto.createHash("sha1");
@@ -182,5 +114,51 @@ function cacheResponse(req, res) {
     });
 }
 
-module.exports = angryCachingProxy;
+module.exports = function(triggerFns) {
+    return function angryCachingProxy(req, res, next) {
+
+        var u = url.parse(req.url);
+        if (!u.host) {
+            return next();
+        }
+
+        if (!req.headers.host) {
+            var msg = "Bad request, no host is set for " + req.url;
+            console.log(msg);
+            return next(new Error(msg));
+        }
+
+        var useCache = triggerFns.some(function(trigger) {
+            return trigger(req, res);
+        });
+
+        if (useCache) {
+            cacheResponse(req, res).fail(function(err) {
+                console.log("Cache FAIL", req.method, req.url, err);
+            });
+            return;
+        }
+
+        console.log("Proxying", req.method, req.url);
+        promisePipe(
+            req,
+            request({
+                    method: req.method,
+                    url: req.url,
+                    headers: xtend({
+                        "X-Proxy": "angry-caching-proxy"
+                    }, req.headers)
+                }),
+            res
+        ).fail(function(err) {
+            console.error("Proxying failed:", err.message, req.method, req.url);
+            res.write("Angry Caching Proxy - Upstream failed: " + err.message);
+            res.end("\n", 500);
+
+            // Ensure that this connection gets closed
+            req.setTimeout(100);
+        });
+
+    };
+};
 
