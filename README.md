@@ -90,27 +90,27 @@ and start the server
     angry-caching-proxy --directory cache
 
 You can inspect and clear the cache by browsing directly to the proxy address
-<http://localhost:8000>
+<http://localhost:8080>
 
 ### apt-get
 
-    http_proxy=http://localhost:8000 sudo -E apt-get install sl
+    http_proxy=http://localhost:8080 sudo -E apt-get install sl
 
 ### Bundler (Rubygems)
 
-    http_proxy=http://localhost:8000 bundle install
+    http_proxy=http://localhost:8080 bundle install
 
 ### npm
 
 With npm it is required to use the non-https version of the registry
 
-    http_proxy=http://localhost:8000 npm install --registry http://registry.npmjs.org/
+    http_proxy=http://localhost:8080 npm install --registry http://registry.npmjs.org/
 
 ### Python pip
 
-    http_proxy=http://localhost:8000 pip install plone
+    http_proxy=http://localhost:8080 pip install plone
 
 Cool guys can also set the proxy globally for everybody:
 
-    export http_proxy=http://localhost:8000
+    export http_proxy=http://localhost:8080
 
