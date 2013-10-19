@@ -36,6 +36,9 @@ app.get("/broken-data", function(req, res) {
     res.send(500, randomResponse());
 });
 
+app.all("/echo", function(req, res) {
+    req.pipe(res);
+});
 
 
 var proxyApp = express();
@@ -80,6 +83,31 @@ describe("Angry Caching Proxy", function() {
             );
             done();
         });
+    });
+
+    it("can proxy POST requests", function(done) {
+        request({
+            method: "POST",
+            url: appUrl("/echo"),
+            form: {
+                foo: "bar"
+            }
+        }, function(err, res, body) {
+            assert.equal(body, "foo=bar");
+            done();
+        });
+    });
+
+    it("can proxy PUT requests", function(done) {
+        var req = request({
+            method: "PUT",
+            url: appUrl("/echo"),
+        }, function(err, res, body) {
+            assert.equal(body, "foo");
+            done();
+        });
+
+        req.end("foo");
     });
 
     it("caches GET 200", function(done) {
