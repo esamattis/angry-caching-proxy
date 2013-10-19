@@ -74,7 +74,10 @@ describe("Angry Caching Proxy", function() {
             method: "GET",
             url: appUrl("/data")
         }, function(err, res, body) {
-            assert.equal(res.headers["x-proxied-by"], "Angry Caching Proxy");
+            assert(
+                /^Angry Caching Proxy/.test(res.headers.via),
+                "Bad via header: "+ res.headers.via
+            );
             done();
         });
     });

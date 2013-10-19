@@ -1,3 +1,4 @@
+var pkg = require("./package.json");
 var crypto = require("crypto");
 var Q = require("q");
 var path = require("path");
@@ -128,7 +129,7 @@ module.exports = function(triggerFns, cacheDir) {
             return next();
         }
 
-        res.setHeader("x-proxied-by", "Angry Caching Proxy");
+        res.setHeader("Via", "Angry Caching Proxy " + pkg.version);
 
         if (!req.headers.host) {
             var msg = "Bad request, no host is set for " + req.url;
