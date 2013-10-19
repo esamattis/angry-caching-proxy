@@ -136,15 +136,16 @@ module.exports = function(triggerFns, cacheDir) {
             return next(new Error(msg));
         }
 
-        var useCache = triggerFns.some(function(trigger) {
-            return trigger(req, res);
-        });
-
-        if (useCache && req.method === "GET") {
-            cacheResponse(req, res).fail(function(err) {
-                console.log("Cache FAIL", req.method, req.url, err);
+        if (req.method === "GET") {
+            var useCache = triggerFns.some(function(trigger) {
+                return trigger(req, res);
             });
-            return;
+            if (useCache) {
+                cacheResponse(req, res).fail(function(err) {
+                    console.log("Cache FAIL", req.method, req.url, err);
+                });
+                return;
+            }
         }
 
         console.log("Proxying", req.method, req.url);
