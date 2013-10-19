@@ -1,9 +1,6 @@
-
 var crypto = require("crypto");
 var Q = require("q");
-var args = require("./args");
 var path = require("path");
-var xtend = require("xtend");
 var url = require("url");
 var request = require("request");
 var promisePipe = require("promisepipe");
@@ -30,97 +27,104 @@ function toCacheKey(req) {
     return h.digest("hex");
 }
 
-function toCachePath(req) {
-    return path.join(args.cacheDir, toCacheKey(req));
-}
 
-function writeMeta(origReq, clientRes) {
-    return writeFile(
-        toCachePath(origReq) + ".json",
-        JSON.stringify({
-            sha1: toCacheKey(origReq),
-            method: origReq.method,
-            url: origReq.url,
-            created: new Date(),
-            responseHeaders: clientRes.headers,
-            requestHeaders: origReq.headers
-        }, null, "    ")
-  );
-}
 
-function createCache(req, res) {
-    console.log("Cache miss", req.method, req.url);
+module.exports = function(triggerFns, cacheDir) {
 
-    var target = toCachePath(req);
-    var tempTarget = target + "." + Math.random().toString(36).substring(7) +".tmp";
+    function toCachePath(req) {
+        return path.join(cacheDir, toCacheKey(req));
+    }
 
-    var s = Date.now();
-    var clientRequest = request(req.url);
+    function writeMeta(origReq, clientRes) {
+        return writeFile(
+            toCachePath(origReq) + ".json",
+            JSON.stringify({
+                sha1: toCacheKey(origReq),
+                method: origReq.method,
+                url: origReq.url,
+                created: new Date(),
+                responseHeaders: clientRes.headers,
+                requestHeaders: origReq.headers
+            }, null, "    ")
+      );
+    }
 
-    var cacheWrite = Q.promise(function(resolve, reject) {
-        clientRequest.on("error", reject);
-        clientRequest.on("response", function(clientRes) {
+    function createCache(req, res) {
+        console.log("Cache miss", req.method, req.url);
 
-            // Write cache only on 200 success
-            if (clientRes.statusCode === 200) {
-                var file = filed(tempTarget);
+        var target = toCachePath(req);
+        var tempTarget = target + "." + Math.random().toString(36).substring(7) +".tmp";
 
-                resolve(Q.all([
-                    promiseFromStream(res),
-                    writeMeta(req, clientRes),
-                    promiseFromStream(file).then(function() {
-                        return rename(tempTarget, target);
-                    })
-                ]));
+        var s = Date.now();
+        var clientRequest = request(req.url);
 
-                clientRequest.pipe(file);
-            } else {
-                resolve(promiseFromStream(res));
-            }
+        var cacheWrite = Q.promise(function(resolve, reject) {
+            clientRequest.on("error", reject);
+            clientRequest.on("response", function(clientRes) {
 
-            // But always proxy the response to the client
-            clientRequest.pipe(res);
+                // Write cache only on 200 success
+                if (clientRes.statusCode === 200) {
+                    var file = filed(tempTarget);
+
+                    resolve(Q.all([
+                        promiseFromStream(res),
+                        writeMeta(req, clientRes),
+                        promiseFromStream(file).then(function() {
+                            return rename(tempTarget, target);
+                        })
+                    ]));
+
+                    clientRequest.pipe(file);
+                } else {
+                    resolve(promiseFromStream(res));
+                }
+
+                // But always proxy the response to the client
+                clientRequest.pipe(res);
+            });
+
         });
 
-    });
+
+        var cachePromise = Q.all([
+            cacheWrite,
+            promiseFromStream(clientRequest),
+        ]);
+
+        cachePromise.finally(function() {
+            console.log("Cache CREATED in", Date.now() - s, "ms for", req.method, req.url, toCacheKey(req));
+        });
+
+        return cachePromise;
+    }
+
+    function respondFromCache(req, res) {
+        console.log("Cache hit for", req.method, req.url, toCacheKey(req));
+
+        res.sendfile(toCachePath(req));
+        return promiseFromStream(res);
+    }
 
 
-    var cachePromise = Q.all([
-        cacheWrite,
-        promiseFromStream(clientRequest),
-    ]);
+    function cacheResponse(req, res) {
 
-    cachePromise.finally(function() {
-        console.log("Cache CREATED in", Date.now() - s, "ms for", req.method, req.url, toCacheKey(req));
-    });
-
-    return cachePromise;
-}
-
-function respondFromCache(req, res) {
-    console.log("Cache hit for", req.method, req.url, toCacheKey(req));
-
-    res.sendfile(toCachePath(req));
-    return promiseFromStream(res);
-}
+        return stat(toCachePath(req)).then(function(info) {
+            return respondFromCache(req, res);
+        }, function(err) {
+            return createCache(req, res);
+        });
+    }
 
 
-function cacheResponse(req, res) {
 
-    return stat(toCachePath(req)).then(function(info) {
-        return respondFromCache(req, res);
-    }, function(err) {
-        return createCache(req, res);
-    });
-}
-
-module.exports = function(triggerFns) {
     return function angryCachingProxy(req, res, next) {
 
         var u = url.parse(req.url);
         if (!u.host) {
             return next();
         }
+
+        res.setHeader("X-proxied-by", "Angry Caching Proxy");
 
         if (!req.headers.host) {
             var msg = "Bad request, no host is set for " + req.url;
@@ -132,6 +136,7 @@ module.exports = function(triggerFns) {
             return trigger(req, res);
         });
 
+        res.setHeader("X-proxy-cache", useCache.toString());
         if (useCache) {
             cacheResponse(req, res).fail(function(err) {
                 console.log("Cache FAIL", req.method, req.url, err);
@@ -145,9 +150,7 @@ module.exports = function(triggerFns) {
             request({
                     method: req.method,
                     url: req.url,
-                    headers: xtend({
-                        "X-Proxy": "angry-caching-proxy"
-                    }, req.headers)
+                    headers: req.headers
                 }),
             res
         ).fail(function(err) {
