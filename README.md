@@ -22,7 +22,7 @@ the packages are downloaded once and then served instantly from the cache.
 
 When doing distributed builds it might hard to share local disk caches.
 
-Just speed up your local `bundle install` runs.
+Just speeding up your local `bundle install` runs.
 
 
 ## Install
