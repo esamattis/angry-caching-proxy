@@ -2,7 +2,7 @@ var optimist = require("optimist");
 var xtend = require("xtend");
 
 var config = {
-    cacheDir: process.cwd() + "/angry-caching-proxy",
+    directory: process.cwd() + "/angry-caching-proxy",
     customTriggers: "/etc/angry-caching-proxy/triggers.js",
     port: 8080,
     triggers: [
@@ -19,15 +19,14 @@ try {
 var args = optimist
     .usage("Start Argry Caching Proxy.\n\nUsage: $0")
 
+    .describe("port", "Port to listen")
     .alias("p", "port")
-    .describe("p", "Port to listen")
 
-    .alias("d", "directory")
-    .alias("directory", "cacheDir")
-    .describe("d", "Directory where to write cached files")
+    .describe("directory", "Directory where to write cached files")
+    .alias("directory", "d")
 
+    .describe("triggers", "Triggers to activate. Can be defined multiple times.")
     .alias("t", "triggers")
-    .describe("t", "Triggers to activate. Can be defined multiple times.")
 
     .alias("h", "help")
     .argv;

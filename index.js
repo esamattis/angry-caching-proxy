@@ -21,15 +21,15 @@ var app = express();
 app.set("view engine", "hbs");
 app.set("views", __dirname + "/views");
 
-app.use(require("./proxy")(config.triggerFns));
+app.use(require("./proxy")(config.triggerFns, config.directory));
 
 app.get("/", function(req, res, next) {
 
-    readdir(config.cacheDir).then(function(files) {
+    readdir(config.directory).then(function(files) {
         var readPromises = files.filter(function(filePath) {
             return (/\.json$/).test(filePath);
         }).map(function(metaDataFile) {
-            var metaDataFilePath = path.join(config.cacheDir, metaDataFile);
+            var metaDataFilePath = path.join(config.directory, metaDataFile);
             var fileName = metaDataFile.replace(/\.json$/, "");
 
             var meta = readFile(metaDataFilePath).then(function(data) {
@@ -62,7 +62,7 @@ app.get("/", function(req, res, next) {
         }, 0);
 
         res.render("index", {
-            cacheDir: config.cacheDir,
+            cacheDir: config.directory,
             files: files,
             total: filesize(total)
         });
@@ -76,12 +76,12 @@ app.get("/client.js", function(req, res) {
 });
 
 app.get("/req/:sha1", function(req, res, next) {
-    var filePath = path.join(config.cacheDir, req.params.sha1);
+    var filePath = path.join(config.directory, req.params.sha1);
     res.sendfile(filePath);
 });
 
 app.delete("/req/:sha1", function(req, res, next) {
-    var filePath = path.join(config.cacheDir, req.params.sha1);
+    var filePath = path.join(config.directory, req.params.sha1);
 
     console.log("Deleting", filePath);
     Q.all([unlink(filePath), unlink(filePath + ".json")]).then(function() {
@@ -91,9 +91,9 @@ app.delete("/req/:sha1", function(req, res, next) {
 });
 
 app.post("/deleteall", function(req, res, next) {
-    readdir(config.cacheDir).then(function(files) {
+    readdir(config.directory).then(function(files) {
         return Q.all(files.map(function(filePath) {
-            return unlink(path.join(config.cacheDir, filePath));
+            return unlink(path.join(config.directory, filePath));
         }));
     }).then(function() {
         res.redirect("/");
@@ -107,10 +107,10 @@ server.listen(Number(config.port) || 8000, function() {
     console.log("Listening on", server.address().port);
 });
 
-var testWriteFile = path.join(config.cacheDir, "README");
+var testWriteFile = path.join(config.directory, "README");
 writeFile(testWriteFile, "Angry Caching Proxy cache files").then(function() {
-    console.log("Using cache directory", config.cacheDir);
+    console.log("Using cache directory", config.directory);
 }, function(err) {
-    console.log("Cannot write to", config.cacheDir, err);
+    console.log("Cannot write to", config.directory, err);
     process.exit(1);
 });
