@@ -7,7 +7,7 @@ var xtend = require("xtend");
 var url = require("url");
 var request = require("request");
 var promisePipe = require("promisepipe");
-var fs = require("graceful-fs");
+var fs = require("fs");
 var filed = require("filed");
 var path = require("path");
 
