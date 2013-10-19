@@ -85,12 +85,14 @@ describe("Angry Caching Proxy", function() {
             url: appUrl("/data")
         }, function(err, res, body) {
             assert(body.match(/^RES/));
+            assert.equal(res.headers["x-proxy-cache"], "miss");
             var prevBody = body;
             request({
                 method: "GET",
                 url: appUrl("/data")
             }, function(err, res, body) {
                 assert(body.match(/^RES/));
+                assert.equal(res.headers["x-proxy-cache"], "hit");
                 assert.equal(prevBody, body);
                 done();
             });
@@ -129,12 +131,14 @@ describe("Angry Caching Proxy", function() {
                 url: appUrl(opts.path)
             }, function(err, res, body) {
                 assert(body.match(/^RES/));
+                assert.equal(res.headers["x-proxy-cache"], "no");
                 var prevBody = body;
                 request({
                     method: opts.method,
                     url: appUrl(opts.path)
                 }, function(err, res, body) {
                     assert(body.match(/^RES/));
+                    assert.equal(res.headers["x-proxy-cache"], "no");
                     assert.notEqual(prevBody, body, "It was cached!");
                     done();
                 });
