@@ -125,7 +125,7 @@ describe("Angry Caching Proxy", function() {
 
             assert(
                 /^Miss /.test(res.headers["x-cache"]),
-                "Bad x-cache miss header: "+ res.headers["x-cache"]
+                "Expected a miss header from : " + res.headers["x-cache"]
             );
 
             var prevBody = body;
@@ -137,7 +137,7 @@ describe("Angry Caching Proxy", function() {
                 assert(body.match(/^RES/));
                 assert(
                     /^Hit /.test(res.headers["x-cache"]),
-                    "Bad x-cache hit header: "+ res.headers["x-cache"]
+                    "Expected a hit header from : " + res.headers["x-cache"]
                 );
 
                 assert.equal(prevBody, body);
@@ -156,7 +156,7 @@ describe("Angry Caching Proxy", function() {
             var prevBody = body;
             assert(
                 /^Miss /.test(res.headers["x-cache"]),
-                "Bad x-cache hit header: "+ res.headers["x-cache"]
+                "Expected a miss header from : " + res.headers["x-cache"]
             );
             request({
                 method: "GET",
@@ -164,6 +164,10 @@ describe("Angry Caching Proxy", function() {
             }, function(err, res, body) {
                 if (err) return done(err);
                 assert(body.match(/^RES/));
+                assert(
+                    /^Miss /.test(res.headers["x-cache"]),
+                    "Expected a miss header from : " + res.headers["x-cache"]
+                );
                 assert.notEqual(prevBody, body);
                 done();
             });
