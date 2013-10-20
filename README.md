@@ -20,7 +20,7 @@ Installing or upgrading multiple Ubuntu machines. In the worst case you have to
 download gigabytes of .deb packages for each machine. With Angry Caching Proxy
 the packages are downloaded once and then served instantly from the cache.
 
-When doing distributed builds it might hard to share local disk caches.
+When doing distributed builds it might be hard to share local disk caches.
 
 Just speeding up your local `bundle install` runs.
 
