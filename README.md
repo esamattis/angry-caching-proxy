@@ -50,7 +50,7 @@ Create `/etc/angry-caching-proxy/config.json` with any of the following keys:
   - `customTriggers`: Path to custom triggers module.
     - default: /etc/angry-caching-proxy/triggers.js
   - `triggers`: Array of triggers to activate.
-    - default `["apt-get", "npm","rubygems"]`
+    - default `["apt-get", "npm", "pypi", "rubygems"]`
 
 
 ## Custom triggers
