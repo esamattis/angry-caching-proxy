@@ -1,9 +1,9 @@
 var pkg = require("./package.json");
+var request = require("request");
 var crypto = require("crypto");
 var Q = require("q");
 var path = require("path");
 var url = require("url");
-var request = require("request");
 var promisePipe = require("promisepipe");
 var fs = require("fs");
 var filed = require("filed");
@@ -58,7 +58,7 @@ module.exports = function(triggerFns, cacheDir) {
         var tempTarget = target + "." + Math.random().toString(36).substring(7) +".tmp";
 
         var s = Date.now();
-        var clientRequest = request(req.url);
+        var clientRequest = request(req.url, { pool: {}});
 
         var cacheWrite = Q.promise(function(resolve, reject) {
             clientRequest.on("error", reject);
@@ -154,7 +154,8 @@ module.exports = function(triggerFns, cacheDir) {
             request({
                     method: req.method,
                     url: req.url,
-                    headers: req.headers
+                    headers: req.headers,
+                    pool: {}
                 }),
             res
         ).fail(function(err) {
