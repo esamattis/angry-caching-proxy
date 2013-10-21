@@ -1,9 +1,9 @@
 var pkg = require("./package.json");
+var request = require("request");
 var crypto = require("crypto");
 var Q = require("q");
 var path = require("path");
 var url = require("url");
-var hyperquest = require("hyperquest");
 var promisePipe = require("promisepipe");
 var fs = require("fs");
 var filed = require("filed");
@@ -58,9 +58,7 @@ module.exports = function(triggerFns, cacheDir) {
         var tempTarget = target + "." + Math.random().toString(36).substring(7) +".tmp";
 
         var s = Date.now();
-        var clientRequest = hyperquest(req.url, {
-            headers: req.headers
-        });
+        var clientRequest = request(req.url, { pool: {}});
 
         var cacheWrite = Q.promise(function(resolve, reject) {
             clientRequest.on("error", reject);
@@ -153,9 +151,11 @@ module.exports = function(triggerFns, cacheDir) {
         console.log("Proxying", req.method, req.url);
         promisePipe(
             req,
-            hyperquest(req.url, {
+            request({
                     method: req.method,
-                    headers: req.headers
+                    url: req.url,
+                    headers: req.headers,
+                    pool: {}
                 }),
             res
         ).fail(function(err) {
