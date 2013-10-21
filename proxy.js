@@ -3,7 +3,7 @@ var crypto = require("crypto");
 var Q = require("q");
 var path = require("path");
 var url = require("url");
-var request = require("request");
+var hyperquest = require("hyperquest");
 var promisePipe = require("promisepipe");
 var fs = require("fs");
 var filed = require("filed");
@@ -58,7 +58,9 @@ module.exports = function(triggerFns, cacheDir) {
         var tempTarget = target + "." + Math.random().toString(36).substring(7) +".tmp";
 
         var s = Date.now();
-        var clientRequest = request(req.url);
+        var clientRequest = hyperquest(req.url, {
+            headers: req.headers
+        });
 
         var cacheWrite = Q.promise(function(resolve, reject) {
             clientRequest.on("error", reject);
@@ -151,9 +153,8 @@ module.exports = function(triggerFns, cacheDir) {
         console.log("Proxying", req.method, req.url);
         promisePipe(
             req,
-            request({
+            hyperquest(req.url, {
                     method: req.method,
-                    url: req.url,
                     headers: req.headers
                 }),
             res

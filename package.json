@@ -25,7 +25,8 @@
     "promisepipe": "~1.0.1",
     "graceful-fs": "~2.0.1",
     "hbs": "~2.4.0",
-    "filesize": "~2.0.0"
+    "filesize": "~2.0.0",
+    "hyperquest": "~0.1.8"
   },
   "devDependencies": {
     "mocha": "~1.13.0",
