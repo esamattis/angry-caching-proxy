@@ -112,7 +112,9 @@ app.post("/deleteall", function(req, res, next) {
 
 var server = http.createServer(app);
 server.listen(Number(config.port), function() {
-    console.log("PID", process.pid, "is listening on port", server.address().port);
+    var port = server.address().port;
+    console.log("Started PID", process.pid);
+    console.log("Proxy and cache view is at http://localhost:" + port);
 });
 
 var testWriteFile = path.join(config.directory, "README");
