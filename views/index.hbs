@@ -4,6 +4,12 @@
         <meta charset="utf-8">
         <title>Angry Caching Proxy</title>
         <style type="text/css" media="screen">
+            body {
+                font-family: Georgia;
+            }
+            a {
+                text-decoration: none;
+            }
             table {
                 text-align: left;
             }
@@ -11,10 +17,22 @@
                 text-decoration: line-through;
             }
             tr:hover {
-                background-color: lightgray;
+                background-color: lightblue;
             }
             .sort {
                 cursor: pointer;
+            }
+            .search {
+                width: 100%;
+            }
+
+            #cached-reqs td {
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow:ellipsis;
+            }
+            #cached-reqs tr {
+                font-size: 10pt;
             }
         </style>
     </head>
@@ -22,15 +40,19 @@
         <a href="https://github.com/epeli/angry-caching-proxy"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"></a>
       <h1>Angry Caching Proxy</h1>
 
-      <p>There is {{files/length}} cached requests stored in {{cacheDir}}</p>
+      <p>There are {{files/length}} cached requests stored in</p>
 
-      <p>{{total}} of disk space is used.</p>
+      <pre>
+      {{cacheDir}}
+      </pre>
 
       <p>
+          Using {{total}} of disk space.
           <form action="/deleteall" method="post" accept-charset="utf-8">
-              <p><input type="submit" value="clear cache"></p>
+              <p><input type="submit" value="clear all"></p>
           </form>
       </p>
+
 
       <div id="cached-reqs">
       <input type="text" class="search" placeholder="Search" autofocus >
@@ -39,8 +61,9 @@
           <thead>
           <tr>
               <th></th>
-              <th class="sort" data-sort="url">cached url</th>
+              <th></th>
               <th class="sort" data-sort="size">bytes</th>
+              <th class="sort" data-sort="url">cached url</th>
               <th class="sort" data-sort="timestamp">created</th>
               <th>sha1</th>
           </tr>
@@ -50,11 +73,13 @@
           {{#each files}}
           <tr class="url-row">
               <td><button class="delete" data-sha1="{{sha1}}" >clear</button></td>
-              <td class="url">{{url}}</td>
-              <td class="humanSize" >{{humanSize}}</td>
+              <td><a href="/req/{{sha1}}.json">meta</a></td>
+              <td class="humanSize" title="{{size}}" >{{humanSize}}</td>
+              <td class="url">
+                  <a href="{{url}}">{{url}}</a>
+              </td>
               <td class="created">{{created}}</td>
               <td class="sha1">{{sha1}}</td>
-              <td><a href="/req/{{sha1}}.json">meta</a></td>
 
               <td class="size" style="display:none;" >{{size}}</td>
               <td class="timestamp" style="display:none;" >{{timestamp}}</td>
