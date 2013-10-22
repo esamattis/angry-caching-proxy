@@ -1,3 +1,4 @@
+/*global List*/
 (function() {
 
 
@@ -27,4 +28,10 @@
 
     });
 
+    new List("cached-reqs", {
+        valueNames: [ "size", "url", "created", "timestamp", "sha1" ]
+    });
+
 }());
+
+

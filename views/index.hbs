@@ -13,6 +13,9 @@
             tr:hover {
                 background-color: lightgray;
             }
+            .sort {
+                cursor: pointer;
+            }
         </style>
     </head>
     <body>
@@ -29,26 +32,38 @@
           </form>
       </p>
 
+      <div id="cached-reqs">
+      <input type="text" class="search" placeholder="Search" autofocus >
+
       <table>
+          <thead>
           <tr>
               <th></th>
-              <th>method</th>
-              <th>cached url</th>
-              <th>bytes</th>
-              <th>created</th>
+              <th class="sort" data-sort="url">cached url</th>
+              <th class="sort" data-sort="size">bytes</th>
+              <th class="sort" data-sort="timestamp">created</th>
+              <th>sha1</th>
           </tr>
+          </thead>
 
+          <tbody class="list">
           {{#each files}}
           <tr class="url-row">
               <td><button class="delete" data-sha1="{{sha1}}" >clear</button></td>
-              <td>{{method}}</td>
-              <td>{{url}}</td>
-              <td>{{size}}</td>
-              <td>{{created}}</td>
+              <td class="url">{{url}}</td>
+              <td class="humanSize" >{{humanSize}}</td>
+              <td class="created">{{created}}</td>
+              <td class="sha1">{{sha1}}</td>
               <td><a href="/req/{{sha1}}.json">meta</a></td>
+
+              <td class="size" style="display:none;" >{{size}}</td>
+              <td class="timestamp" style="display:none;" >{{timestamp}}</td>
           </tr>
           {{/each}}
+          </tbody>
       </table>
+      </div>
     </body>
+    <script type="text/javascript" charset="utf-8" src="/list.js"> </script>
     <script type="text/javascript" charset="utf-8" src="/client.js"> </script>
 </html>

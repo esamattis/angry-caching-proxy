@@ -63,8 +63,12 @@ app.get("/", function(req, res, next) {
 
         res.render("index", {
             cacheDir: config.directory,
-            files: files,
-            total: filesize(total)
+            total: filesize(total),
+            files: files.map(function(file) {
+                file.humanSize = filesize(file.size);
+                file.timestamp = new Date(file.created).getTime();
+                return file;
+            })
         });
     }, next);
 
@@ -73,6 +77,10 @@ app.get("/", function(req, res, next) {
 
 app.get("/client.js", function(req, res) {
     res.sendfile(__dirname + "/client.js");
+});
+
+app.get("/list.js", function(req, res) {
+    res.sendfile(__dirname + "/vendor/list.js");
 });
 
 app.get("/req/:sha1", function(req, res, next) {
