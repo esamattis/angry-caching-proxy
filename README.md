@@ -1,5 +1,8 @@
 [![Build Status](https://travis-ci.org/epeli/angry-caching-proxy.png?branch=master)](https://travis-ci.org/epeli/angry-caching-proxy)
 
+![screenshot](https://github.com/epeli/angry-caching-proxy/raw/master/extra/screenshot.png)
+
+
 # Angry Caching Proxy
 
 Make package downloads lightning fast for apt-get, npm, pip and Rubygems!
