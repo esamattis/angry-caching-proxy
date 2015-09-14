@@ -110,7 +110,9 @@ With npm it is required to use the non-https version of the registry
 
 ### Python pip
 
-    http_proxy=http://localhost:8080 pip install plone
+With pip use the non-https version of the registry:
+
+    http_proxy=http://localhost:8080 pip install  --index-url http://pypi.python.org/simple plone
 
 Cool guys can also set the proxy globally for everybody:
 
