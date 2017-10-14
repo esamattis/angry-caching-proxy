@@ -31,7 +31,7 @@ var args = optimist
     .describe("triggers", "Triggers to activate. Can be defined multiple times.")
     .alias("t", "triggers")
 
-    .describe("workers", "How many node.js processes to use as workes. Defaults to machine cpu core count.")
+    .describe("workers", "How many node.js processes to use as workers. Defaults to machine cpu core count.")
     .alias("w", "workers")
 
     .alias("h", "help")

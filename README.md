@@ -48,7 +48,7 @@ Create `/etc/angry-caching-proxy/config.json` with any of the following keys:
   - `directory`: Where to store cached requests.
   - `port`: Port to listen.
     - default: 8080
-  - `workes`: Workers to use. Default to machine cpu core count.
+  - `workers`: Workers to use. Default to machine cpu core count.
   - `customTriggers`: Path to custom triggers module.
     - default: /etc/angry-caching-proxy/triggers.js
   - `triggers`: Array of triggers to activate.
