@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/epeli/angry-caching-proxy.png?branch=master)](https://travis-ci.org/epeli/angry-caching-proxy)
+[![Build Status](https://travis-ci.org/epeli/angry-caching-proxy.png?branch=master)](https://travis-ci.org/epeli/angry-caching-proxy) [![Greenkeeper badge](https://badges.greenkeeper.io/epeli/angry-caching-proxy.svg)](https://greenkeeper.io/)
 
 # Angry Caching Proxy
 
