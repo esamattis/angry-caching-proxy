@@ -16,19 +16,19 @@
     "angry-caching-proxy": "./bin/angry-caching-proxy"
   },
   "dependencies": {
-    "request": "~2.27.0",
-    "express": "3.4.1",
-    "q": "~0.9.7",
+    "request": "~2.88.0",
+    "express": "4.16.3",
+    "q": "~1.5.1",
     "filed": "~0.1.0",
     "optimist": "~0.6.0",
-    "xtend": "~2.1.1",
-    "promisepipe": "~1.0.1",
-    "graceful-fs": "~2.0.1",
-    "hbs": "~2.4.0",
-    "filesize": "~2.0.0"
+    "xtend": "~4.0.1",
+    "promisepipe": "~3.0.0",
+    "graceful-fs": "~4.1.11",
+    "hbs": "~4.0.1",
+    "filesize": "~3.6.1"
   },
   "devDependencies": {
-    "mocha": "~1.13.0",
-    "rimraf": "~2.2.2"
+    "mocha": "~5.2.0",
+    "rimraf": "~2.6.2"
   }
 }
